@@ -1,0 +1,157 @@
+input {
+  beats {
+    port => 5044
+  }
+}
+
+filter {
+  if [message] =~ /^\[http\]/ {
+    ##############################
+    # Tag as HTTP access
+    ##############################
+    mutate {
+      add_field => { "event_type" => "http_access" }
+    }
+
+    ##############################
+    # Extract core request parts
+    ##############################
+    grok {
+      match => {
+        "message" => "\[http\] %{IP:client_ip} - - \[%{HTTPDATE:timestamp}\] %{WORD:method} %{URIPATHPARAM:request}"
+      }
+      tag_on_failure => []
+    }
+
+    grok {
+      match => { "request" => "%{URIPATH:request_path}\??%{GREEDYDATA:request_query}" }
+      tag_on_failure => []
+    }
+
+    if [request_query] {
+      mutate {
+        gsub => ["request_query", "^\?", ""]
+      }
+    }
+
+    if [request_query] {
+      kv {
+        source => "request_query"
+        field_split => "&"
+        value_split => "="
+        tag_on_failure => []
+      }
+    }
+
+    ##############################
+    # Extract referer query params
+    ##############################
+    if "referer=" in [message] {
+      grok {
+        match => { "message" => "referer=(?:\"|)(?<referer>[^\" ]+)" }
+        tag_on_failure => []
+      }
+    }
+
+    if [referer] {
+      grok {
+        match => { "referer" => "%{URIPATH:referer_path}\??%{GREEDYDATA:referer_query}" }
+        tag_on_failure => []
+      }
+    }
+
+    if [referer_query] {
+      mutate {
+        gsub => ["referer_query", "^\?", ""]
+      }
+    }
+
+    if [referer_query] {
+      kv {
+        source => "referer_query"
+        field_split => "&"
+        value_split => "="
+        tag_on_failure => []
+      }
+    }
+
+    ##############################
+    # Fallback: Extract from full message
+    ##############################
+    if ![client_id] and "client_id=" in [message] {
+      grok {
+        match => { "message" => "client_id=%{DATA:client_id}(?:&|\s)" }
+        tag_on_failure => []
+      }
+    }
+
+    if ![client_id] and "client_id=" in [event][original] {
+      grok {
+        match => { "[event][original]" => "client_id=%{DATA:client_id}(?:&|\s)" }
+        tag_on_failure => []
+      }
+    }
+
+    if ![sessionDataKey] and "sessionDataKey=" in [message] {
+      grok {
+        match => { "message" => "sessionDataKey=%{DATA:sessionDataKey}(?:&|\s)" }
+        tag_on_failure => []
+      }
+    }
+
+    if ![sessionDataKey] and "sessionDataKey=" in [event][original] {
+      grok {
+        match => { "[event][original]" => "sessionDataKey=%{DATA:sessionDataKey}(?:&|\s)" }
+        tag_on_failure => []
+      }
+    }
+
+    ##############################
+    # Optional: Decode URIs
+    ##############################
+    if [redirect_uri] {
+      urldecode {
+        field => "redirect_uri"
+      }
+    }
+
+    if [rf_redirect_uri] {
+      urldecode {
+        field => "rf_redirect_uri"
+      }
+    }
+
+    if [commonAuthCallerPath] {
+      urldecode {
+        field => "commonAuthCallerPath"
+      }
+    }
+
+    ##############################
+    # Parse @timestamp
+    ##############################
+    date {
+      match => ["timestamp", "dd/MMM/yyyy:HH:mm:ss Z"]
+      timezone => "UTC"
+      tag_on_failure => []
+    }
+  } # end of [message] =~ /^\[http\]/
+}
+
+
+output {
+  if [event_type] == "http_access" {
+    elasticsearch {
+      hosts => ["https://192.168.18.90:9200"]
+      index => "wso2-http-logs-%{+YYYY.MM.dd}"
+      user => "elastic"
+      password => "Searchndestroy1@"
+      ssl => true
+      ssl_certificate_verification => false
+    }
+
+    stdout {
+      codec => rubydebug
+    }
+  }
+}
