@@ -1,0 +1,12 @@
+[
+  {
+    "_source": {
+      "message": "22:49:55,881 [-] [PassThroughMessageProcessor-36]  INFO ELKCounterMetric apimMetrics: apim:response, properties :{\"apiName\":\"PizzaShackAPI\",\"proxyResponseCode\":200,\"destination\":\"https://localhost:9443/am/sample/pizzashack/v1/api/\",\"apiCreatorTenantDomain\":\"carbon.super\",\"platform\":\"Other\",\"apiMethod\":\"GET\",\"apiVersion\":\"1.0.0\",\"gatewayType\":\"SYNAPSE\",\"apiCreator\":\"admin\",\"responseCacheHit\":false,\"backendLatency\":3,\"correlationId\":\"ad13e680-6cf4-4f37-bc0c-a5e52fc30984\",\"requestMediationLatency\":1,\"keyType\":\"SANDBOX\",\"apiId\":\"fa52fd0c-25a9-44e6-b500-7fa83b27cd74\",\"applicationName\":\"DefaultApplication\",\"targetResponseCode\":200,\"requestTimestamp\":\"2025-07-25T17:49:55.876Z\",\"applicationOwner\":\"admin\",\"userAgent\":\"curl\",\"userName\":\"admin@carbon.super\",\"apiResourceTemplate\":\"/menu\",\"regionId\":\"default\",\"responseLatency\":5,\"responseMediationLatency\":1,\"userIp\":\"192.168.18.90\",\"apiContext\":\"/pizzashack/1.0.0\",\"applicationId\":\"b2958578-37d0-4e63-a222-11fdcebcc7b2\",\"apiType\":\"HTTP\",\"properties\":{\"commonName\":\"N/A\",\"responseContentType\":\"application/json\",\"subtype\":\"DEFAULT\",\"isEgress\":false,\"apiContext\":\"/pizzashack/1.0.0\",\"responseSize\":0,\"userName\":\"admin@carbon.super\"}}"
+    }
+  },
+  {
+    "_source": {
+      "message": "21:59:18,449 [-] [PassThroughMessageProcessor-262]  INFO ELKCounterMetric apimMetrics: apim:faulty, properties :{\"apiName\":\"PizzaShackAPI\",\"requestTimestamp\":\"2025-07-25T16:59:18.448Z\",\"errorType\":\"AUTH\",\"proxyResponseCode\":401,\"errorMessage\":\"AUTHENTICATION_FAILURE\",\"applicationOwner\":\"UNKNOWN\",\"errorCode\":900901,\"apiCreatorTenantDomain\":\"carbon.super\",\"apiVersion\":\"1.0.0\",\"gatewayType\":\"SYNAPSE\",\"apiCreator\":\"admin\",\"regionId\":\"default\",\"correlationId\":\"da5be4d5-364c-46d4-8d6e-4ff7c00a5977\",\"keyType\":\"UNKNOWN\",\"applicationId\":\"UNKNOWN\",\"apiId\":\"fa52fd0c-25a9-44e6-b500-7fa83b27cd74\",\"apiType\":\"HTTP\",\"applicationName\":\"UNKNOWN\",\"properties\":{\"commonName\":\"N/A\",\"responseContentType\":\"application/json\",\"subtype\":\"DEFAULT\",\"isEgress\":false,\"apiContext\":\"/pizzashack/1.0.0\",\"responseSize\":0},\"targetResponseCode\":-1}"
+    }
+  }
+]
